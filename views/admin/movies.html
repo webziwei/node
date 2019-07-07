@@ -1,0 +1,125 @@
+<%- include("header.html") %>
+
+<div class="my_msk">
+    <div class="close-btn">
+                        <i class="fa fa-close"></i>
+    </div>
+    <div class="box clearfix">
+    
+      
+
+    </div>
+
+</div>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>电影列表</h2>
+    </div>
+    <!-- <div class="col-sm-8">
+        <div class="title-action">
+            <a href="/admin/goods/add" class="btn btn-success">添加歌曲</a>
+        </div>
+    </div> -->
+</div>
+
+<!-- 表格 -->
+<div class="ibox float-e-margins">
+
+    <div class="ibox-content">
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <i class="fa fa-sort-numeric-asc"></i>
+
+                    </th>
+                    <th>电影海报</th>
+                    <th>电影名</th>
+                    <th>主演</th>
+                    <th>豆瓣评分</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% result.forEach(function(item,index){%>
+                <tr>
+                    <td><%=index+1%></td>
+                    <td><img src="<%=item.img%>" alt="" width="50px" height="50px"></td>
+                    <td><%=item.title%></td>
+                    <td><%=item.actors?item.actors:"未知"%></td>
+                    <td><%=item.rate?item.rate:"暂无豆瓣评分"%></td>
+                    <td>
+                        <!-- <a href="/admin/musics/del?id=<%=item._id%>" type="button" class="btn btn-danger">删除</a> -->
+                        <a href="javascript:;" data-id="<%=item._id%>" type="button"
+                            class="btn   btn-warning info dim">具体信息</a>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <!-- 分页功能 -->
+        <div class="btn-group">
+            <% for(var i =0;i < pageCount;i++){%>
+            <a href="/admin/movies?page=<%=i%>" class="btn btn-white"><%=i+1%></a>
+            <% } %>
+        </div>
+        <!-- 分页功能end -->
+
+    </div>
+</div>
+
+<!-- 表格 end -->
+<%- include("footer.html") %>
+<script>
+$(function(){
+
+$(".info").click(function(e){
+    console.log($(this).data())
+    var infoId= $(this).data();
+    console.log(infoId.id)
+     $.ajax({
+        url: "/admin/movies/info",
+        type: "post",
+        dataType: 'json',
+        data:infoId,
+        success: function (data) {
+   
+            console.log(data);
+            if(!data.actors){
+                data.actors="未知";
+            }
+            
+            var str="";
+           str+='<div class="img">';
+           str+='<img src="'+data.img+'" alt="">';
+           str+='</div>';
+           str+='<div class="movie-info" style="float: left;">';
+           str+='<ul>';
+           str+='<li>电影名:'+data.title+'</li>';
+           str+='<li>上映时间:'+ data.release+'</li>';
+           str+='<li>导演:'+ data.director+'</li>';
+           str+='<li>主演:'+ data.actors+'</li>';
+           str+='<li>电影时长:'+ data.duration+'</li>';
+           str+='<li>发行地:'+ data.region+'</li>';
+           str+='<li>预告片:<a href="'+data.trailer+'">点击前往</a> </li>';
+           str+='</ul>';
+           str+='</div>';
+           console.log(str)
+             $(".box").html(str);
+            $(".my_msk").show(2000).find(".close-btn").click(function () {
+                $(".my_msk").hide("2000")
+            })
+        }
+    })
+   
+})
+
+
+
+
+})
+
+
+
+
+</script>

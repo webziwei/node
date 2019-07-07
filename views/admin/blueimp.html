@@ -1,0 +1,82 @@
+<%- include("header.html") %>
+<div class="my_msk">
+    <div class="box_img">
+        <!-- <img src="" alt=""> -->
+    </div>
+ 
+   
+
+</div>
+<!-- <body class="gray-bg"> -->
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+
+                    <div class="ibox-content">
+
+                       
+                        <div class="lightBoxGallery">
+                            <% result.forEach(function(item,index){%>
+                            <a href="javascript:;" title="<%=item.alt%>" data-gallery="" class="img"><img data-index="<%=index%>" src="<%=item.url%>"></a>
+                            <% }) %>
+
+
+                            <!-- <span class="texturl">
+                                
+                                [<%for(var i=0;i< result.length;i++){%>{"url":"<%=result[i].url%>"},<%}%>]
+                               
+                            </span> -->
+            
+
+                            <div id="blueimp-gallery" class="blueimp-gallery">
+                                <div class="slides"></div>
+                                <h3 class="title"></h3>
+                                <a class="prev">‹</a>
+                                <a class="next">›</a>
+                                <a class="close">×</a>
+                                <a class="play-pause"></a>
+                                <ol class="indicator"></ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<%- include("footer.html") %><!-- 自定义js -->
+<!-- <script src="/js/content.js?v=1.0.0"></script>
+ <script src="/js/plugins/blueimp/jquery.blueimp-gallery.min.js"></script> -->
+ <script>
+    $(function () {
+        
+        // console.log(JSON.stringify($(".texturl").html()))
+        
+        // console.log(JSON.parse(JSON.stringify($(".texturl").html())))
+        $("img").click(function (e) {
+            
+            console.log($(this).data())
+            var infoUrl = $(this).attr("src");
+            console.log(infoUrl)
+           
+            var str = "";
+            str += '<img src="'+ infoUrl+'" alt="">';
+    
+            console.log(str)
+            $(".box_img").html(str);
+            $(".my_msk").show(2000).click(function(){
+                $(this).hide(500);
+            });
+        })
+
+
+
+
+    })
+
+
+
+
+</script>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>Document</title>
+</head>
+<style type="text/css">
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    body,
+    html {
+        width: 100%;
+        height: 100%;
+    }
+    .box {
+        width: 1000px;
+        margin: 30px auto;
+        border: 1px solid #ccc;
+        padding: 10px 10px 0 10px;
+        background-color: lightblue;
+        border-radius: 5px;
+    }
+    .box .add {
+        width: 1000px;
+        display: flex;
+        margin-bottom: 10px;
+    }
+    .add input {
+        flex: 1;
+    }
+    .info {
+        width: 100%;
+        text-align: center;
+    }
+    .info td {
+        border-top: 1px solid #fff;
+        border-right: 1px solid #fff;
+    }
+    .msk {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background: rgba(0, 0, 0, .5);
+        top: 0;
+        left: 0;
+    }
+    .content {
+        width: 300px;
+        position: absolute;
+        left: 50%;
+        margin-left: -150px;
+        margin-top: 200px;
+        background-color: #fff;
+        padding: 10px;
+        opacity: 1;
+    }
+    .content input {
+        width: 290px;
+        height: 50px;
+        margin-bottom: 10px;
+    }
+    h1 {
+        width: 200px;
+        margin: 10px auto;
+
+    }
+</style>
+<body>
+    <h1>信息系统</h1>
+    <div id="app" class="box">
+        <div class="msk" v-show="mskflag">
+            <div class="content">
+                <input type="text" class="author" v-model="ed.author" placeholder="请输入歌名"></br>
+                <input type="text" class="title" v-model="ed.title" placeholder="请输入标题"></br>
+                <input type="button" value="确定" class="sub" @click="yes" name="">
+            </div>
+        </div>
+        <div class="add">
+            <span>请填取录入您的信息: &nbsp</span>
+            <input type="text" v-model="author" placeholder="请输入歌名">
+            <input type="text" v-model="title" placeholder="请输入标题">
+            <input type="button" value="提交" @click="add" name="">
+        </div>
+        <table class="info">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>歌名</th>
+                    <th>标题</th>
+                    <!-- <th>添加时间</th> -->
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item,i) in data">
+                    <td>{{i+1}}</td>
+                    <td>{{item.author}}</td>
+                    <td>{{item.title}}</td>             
+                    <!-- <td>{{item.time || dateFormat}}</td> -->
+                    <td><button @click="del(i)">删除</button> <button @click="edit(i)">修改</button></td>
+                </tr>
+            </tbody>
+            <div>
+                搜索:<input type="text" name="" v-model="keywords">
+            </div>
+        </table>
+    </div>
+    <script src='./js/vue.js'></script>
+    <script src="./js/axios.js"></script>
+    <script>
+
+        //全局过滤器
+        // Vue.filter('dateFormat', function (value) {
+        //     var dt=new Date(value);
+
+        //     return `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`//返回过滤过的 es6语法字符串拼接
+
+
+        // })
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                mskflag: false,//控制修改框显示
+                author: '',
+                title: '',
+                time: '',
+                data: [],
+                num: 0,//记录索引
+                ed: { "author": "", "title": ""},
+                keywords: ""
+            },
+            methods: {
+                add: function (i) {//参数
+                    // var dt = new Date;
+                    // this.time=dt.getHours()+":"+dt.getMinutes()+":"+dt.getSeconds();
+                    // this.time = dt;
+                    //添加数据
+                    this.data.push({ 'author': this.author, 'title': this.title, "time": this.time })
+                    //清空输入框
+                    this.author = this.title = "";
+                },
+                del: function (i) {
+                    this.data.splice(i, 1);
+                },
+                edit: function (i) {
+                    //显示修改页面
+                    this.mskflag = true;
+
+                    this.ed.author = this.data[i].author
+                    this.ed.title = this.data[i].title
+                    this.num = i;//记录当前索引
+                },
+                yes: function () {
+                    // let dt = new Date;
+                    // let date=dt.getHours()+":"+dt.getMinutes()+":"+dt.getSeconds();
+                    var a = this.num;
+                    this.data[a].author = this.ed.author;
+                    this.data[a].title = this.ed.title;
+                    // this.data[a].time = dt;
+                    this.mskflag = false;
+                },
+                search: function (keywords) {//关键字
+         
+                    return this.data.filter(item => {//将数组返回
+                        if (item.name.includes(keywords)) {
+                            return item;
+                        }
+                    })
+                }
+
+            },
+            filters: {//局部过滤器
+                dateFormat: function (value) {//value 要过滤的数据
+                    var dt = new Date(value);
+                    return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`//返回过滤过的 es6语法字符串拼接
+
+                }
+
+            },
+            created() { //成功初始化数据和方法
+
+              var _this=this;
+                    axios.get("http://127.0.0.1:3000/api").then(function (res) {
+                        console.log(res.data.result);
+
+                        _this.data=res.data.result;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                
+            }
+        })  
+    </script>
+</body>
+
+</html>
